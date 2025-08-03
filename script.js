@@ -649,6 +649,7 @@ function resetInventory() {
     
     setCursorItem(null, 0);
     
+    // Re-add starter items
     addItemToSlot('inventory-0', 'oak_log', 8);
     addItemToSlot('inventory-1', 'cobblestone', 32);
     addItemToSlot('inventory-2', 'coal', 16);
@@ -656,6 +657,9 @@ function resetInventory() {
     addItemToSlot('inventory-4', 'red_mushroom', 6);
     addItemToSlot('inventory-5', 'brown_mushroom', 4);
     addItemToSlot('inventory-6', 'bowl', 2);
+    addItemToSlot('inventory-7', 'wheat', 12);
+    addItemToSlot('inventory-8', 'sugarcane', 8);
+    addItemToSlot('inventory-9', 'paper', 6);
     addItemToSlot('hotbar-0', 'stick', 12);
     addItemToSlot('hotbar-1', 'torch', 24);
     addItemToSlot('hotbar-2', 'oak_planks', 16);
