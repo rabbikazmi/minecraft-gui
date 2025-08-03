@@ -1,0 +1,921 @@
+@import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap');
+:root {
+    --gui-bg: #c6c6c6;
+    --slot-bg: #8b8b8b;
+    --slot-border-inset: #555555;
+    --slot-border-outset: #ffffff;
+    --text-color: #404040;
+}
+
+body {
+    background-image: url('./images/bg.jpg');
+    background-size: cover;
+    background-position: center;
+    background-attachment: fixed;
+    background-repeat: no-repeat;
+    background-color: #2d4a2d; 
+    font-family: 'Press Start 2P', cursive;
+    color: var(--text-color);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    margin: 0;
+    overflow: hidden; 
+}
+
+#gui-container {
+    position: relative;
+    width: 460px;
+    background-color: var(--gui-bg);
+    border-top: 2px solid var(--slot-border-outset);
+    border-left: 2px solid var(--slot-border-outset);
+    border-bottom: 2px solid var(--slot-border-inset);
+    border-right: 2px solid var(--slot-border-inset);
+    padding: 10px;
+    margin: 10px;
+    margin-top: 60px;
+    image-rendering: pixelated;
+    user-select: none;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+    z-index: 100;
+    max-height: calc(100vh - 80px);
+    overflow-y: auto;
+}
+
+.gui-title {
+    font-size: 14px;
+    margin-top: 15px;
+    margin-bottom: 10px;
+}
+.gui-title:first-of-type {
+    margin-top: 0;
+}
+
+/* --- crafting area styles --- */
+#crafting-area {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 10px;
+    gap: 15px;
+}
+
+#crafting-arrow {
+    font-size: 30px;
+    color: var(--text-color);
+}
+
+.craft-button {
+    background-color: var(--slot-bg);
+    border-top: 2px solid var(--slot-border-outset);
+    border-left: 2px solid var(--slot-border-outset);
+    border-bottom: 2px solid var(--slot-border-inset);
+    border-right: 2px solid var(--slot-border-inset);
+    color: var(--text-color);
+    font-family: 'Press Start 2P', cursive;
+    font-size: 10px;
+    padding: 8px 12px;
+    cursor: pointer;
+    user-select: none;
+    transition: background-color 0.1s;
+}
+
+.craft-button:hover {
+    background-color: #a0a0a0;
+}
+
+.craft-button:active {
+    border-top: 2px solid var(--slot-border-inset);
+    border-left: 2px solid var(--slot-border-inset);
+    border-bottom: 2px solid var(--slot-border-outset);
+    border-right: 2px solid var(--slot-border-outset);
+}
+
+.craft-button:disabled {
+    background-color: #666;
+    color: #999;
+    cursor: not-allowed;
+    border-top: 2px solid var(--slot-border-inset);
+    border-left: 2px solid var(--slot-border-inset);
+    border-bottom: 2px solid var(--slot-border-outset);
+    border-right: 2px solid var(--slot-border-outset);
+}
+
+/* --- grid styles --- */
+.item-grid {
+    display: grid;
+    gap: 4px;
+    background-color: #373737;
+    border: 2px solid var(--slot-border-inset);
+    padding: 4px;
+}
+
+#inventory-grid, #hotbar-grid, #saved-items-grid {
+    grid-template-columns: repeat(9, 1fr);
+}
+#crafting-grid {
+    grid-template-columns: repeat(2, 1fr);
+}
+#crafting-output {
+    grid-template-columns: 1fr;
+}
+
+#hotbar-grid {
+    margin-top: 10px;
+}
+
+
+/* --- slot and item styles --- */
+.slot {
+    width: 42px;
+    height: 42px;
+    background-color: var(--slot-bg);
+    border-top: 2px solid var(--slot-border-inset);
+    border-left: 2px solid var(--slot-border-inset);
+    border-bottom: 2px solid var(--slot-border-outset);
+    border-right: 2px solid var(--slot-border-outset);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: relative;
+    cursor: pointer;
+}
+
+.slot img {
+    width: 32px;
+    height: 32px;
+    image-rendering: pixelated;
+    user-select: none;
+    pointer-events: none;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+}
+
+.quantity-text {
+    position: absolute;
+    bottom: 2px;
+    right: 3px;
+    font-size: 14px;
+    color: white;
+    text-shadow: 1px 1px 0 #373737, -1px -1px 0 #373737, 1px -1px 0 #373737, -1px 1px 0 #373737;
+    pointer-events: none;
+}
+
+/* --- click-based inventory system --- */
+.slot.selected {
+    background-color: #a9a9a9;
+    border-color: #f0f0f0;
+}
+
+.slot.has-item:hover {
+    background-color: #9f9f9f;
+}
+
+.cursor-item {
+    position: fixed;
+    pointer-events: none;
+    z-index: 10000;
+    width: 32px;
+    height: 32px;
+    image-rendering: pixelated;
+    transform: translate(-50%, -50%);
+}
+
+.cursor-quantity {
+    position: fixed;
+    pointer-events: none;
+    z-index: 10001;
+    font-family: 'Press Start 2P', cursive;
+    font-size: 14px;
+    color: white;
+    text-shadow: 1px 1px 0 #373737, -1px -1px 0 #373737, 1px -1px 0 #373737, -1px 1px 0 #373737;
+    transform: translate(-50%, -50%);
+}
+
+/* --- character section styles --- */
+#character-selector {
+    position: fixed;
+    top: 15px;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    gap: 10px;
+    z-index: 1000;
+    background-color: rgba(198, 198, 198, 0.9);
+    padding: 6px 12px;
+    border: 2px solid var(--slot-border-outset);
+    border-bottom: 2px solid var(--slot-border-inset);
+    border-right: 2px solid var(--slot-border-inset);
+    border-radius: 6px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+}
+
+.character-selection-wrapper {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+}
+
+.character-label {
+    font-family: 'Press Start 2P', cursive;
+    font-size: 8px;
+    color: var(--text-color);
+    text-shadow: 1px 1px 0 rgba(255, 255, 255, 0.8);
+    font-weight: bold;
+}
+
+.character-selection-wrapper .character-btn.active + .character-label {
+    color: #4CAF50;
+    text-shadow: 1px 1px 0 rgba(255, 255, 255, 0.8), 0 0 3px rgba(76, 175, 80, 0.5);
+}
+
+.character-on-page {
+    position: fixed;
+    top: 50%;
+    transform: translateY(-50%);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    opacity: 0;
+    transition: opacity 0.5s ease-in-out;
+    z-index: 10;
+}
+
+#alex-character {
+    left: calc(50% + 350px);
+}
+
+#sunny-character {
+    left: calc(50% - 450px);
+}
+
+.character-on-page.active {
+    opacity: 1;
+}
+
+.character-image {
+    height: 300px;
+    width: auto;
+    image-rendering: pixelated;
+    animation: characterBob 3s ease-in-out infinite;
+    filter: drop-shadow(0 0 10px rgba(0, 0, 0, 0.3));
+}
+
+.shadow {
+    width: 120px;
+    height: 40px;
+    background: radial-gradient(ellipse, rgba(0, 0, 0, 0.4) 0%, rgba(0, 0, 0, 0.2) 50%, transparent 100%);
+    border-radius: 50%;
+    margin-top: -20px;
+    animation: shadowPulse 3s ease-in-out infinite;
+}
+
+@keyframes characterBob {
+    0%, 100% {
+        transform: translateY(0px);
+    }
+    50% {
+        transform: translateY(-15px);
+    }
+}
+
+@keyframes shadowPulse {
+    0%, 100% {
+        transform: scale(1);
+        opacity: 0.4;
+    }
+    50% {
+        transform: scale(0.9);
+        opacity: 0.6;
+    }
+}
+.character-on-page .speech-bubble {
+    position: absolute;
+    bottom: 320px;
+    left: 50%;
+    transform: translateX(-50%);
+    background-color: #f0f0f0;
+    border: 2px solid #333333;
+    border-radius: 6px;
+    padding: 8px 12px;
+    font-family: 'Press Start 2P', cursive;
+    font-size: 10px;
+    color: #333333;
+    white-space: normal;
+    max-width: 200px;
+    min-width: 80px;
+    text-align: center;
+    line-height: 1.4;
+    word-wrap: break-word;
+    z-index: 9999;
+    box-shadow: 1px 1px 6px rgba(0, 0, 0, 0.3);
+    animation: bubbleAppear 0.3s ease-out;
+}
+
+.character-on-page .speech-bubble.hidden {
+    display: none;
+}
+
+.character-on-page .speech-arrow {
+    position: absolute;
+    bottom: -12px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 0;
+    height: 0;
+    border-left: 10px solid transparent;
+    border-right: 10px solid transparent;
+    border-top: 12px solid #f0f0f0;
+    z-index: 9999;
+}
+
+.character-on-page .speech-arrow::before {
+    content: '';
+    position: absolute;
+    bottom: 3px;
+    left: -15px;
+    width: 0;
+    height: 0;
+    border-left: 15px solid transparent;
+    border-right: 15px solid transparent;
+    border-top: 18px solid #333333;
+    z-index: 999;
+}
+
+.character-btn {
+    background: var(--slot-bg);
+    border: 2px solid var(--slot-border-inset);
+    border-top: 2px solid var(--slot-border-outset);
+    border-left: 2px solid var(--slot-border-outset);
+    padding: 4px;
+    cursor: pointer;
+    transition: all 0.2s;
+    width: 40px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 4px;
+    position: relative;
+}
+
+.character-btn:hover {
+    background-color: #a0a0a0;
+    transform: scale(1.05);
+}
+
+.character-btn.active {
+    background-color: #b0b0b0;
+    border-top: 2px solid var(--slot-border-inset);
+    border-left: 2px solid var(--slot-border-inset);
+    border-bottom: 2px solid var(--slot-border-outset);
+    border-right: 2px solid var(--slot-border-outset);
+    transform: scale(1.1);
+    box-shadow: 0 0 8px rgba(255, 255, 0, 0.4);
+}
+
+.character-btn.active::after {
+    content: '✓';
+    position: absolute;
+    bottom: -3px;
+    right: -3px;
+    background: #4CAF50;
+    color: white;
+    font-size: 8px;
+    width: 14px;
+    height: 14px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 1px solid white;
+}
+
+.character-btn img {
+    width: 28px;
+    height: 28px;
+    image-rendering: pixelated;
+}
+
+/* --- recipe book styles --- */
+#recipe-book-btn {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    background: var(--gui-bg);
+    border: 2px solid var(--slot-border-outset);
+    border-bottom: 2px solid var(--slot-border-inset);
+    border-right: 2px solid var(--slot-border-inset);
+    cursor: pointer;
+    padding: 4px;
+    height: 36px;
+    width: 36px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    user-select: none;
+    transition: background-color 0.1s;
+}
+
+/* --- corner button styles --- */
+.corner-button {
+    position: fixed;
+    background: var(--gui-bg);
+    border: 2px solid var(--slot-border-outset);
+    border-bottom: 2px solid var(--slot-border-inset);
+    border-right: 2px solid var(--slot-border-inset);
+    cursor: pointer;
+    padding: 8px;
+    height: 48px;
+    width: 48px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    user-select: none;
+    transition: all 0.1s ease;
+    z-index: 100;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+    font-family: 'Press Start 2P', cursive;
+    font-size: 8px;
+    color: #333;
+}
+
+.corner-button.top-left {
+    top: 20px;
+    left: 20px;
+    width: 60px; 
+}
+
+.corner-button.top-right {
+    top: 20px;
+    right: 20px;
+}
+
+.corner-button img {
+    width: 100%;
+    height: 100%;
+    image-rendering: pixelated;
+    pointer-events: none;
+}
+
+.corner-button .theme-text {
+    pointer-events: none;
+    font-weight: bold;
+}
+
+.corner-button.dark-theme {
+    background: #2a2a2a;
+    color: #fff;
+    border-color: #555;
+}
+
+.corner-button.dark-theme .theme-text {
+    color: #fff;
+}
+
+.corner-button:hover {
+    background-color: #d0d0d0;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
+}
+
+.corner-button.dark-theme:hover {
+    background-color: #404040;
+}
+
+.corner-button:active {
+    border-top: 2px solid var(--slot-border-inset);
+    border-left: 2px solid var(--slot-border-inset);
+    border-bottom: 2px solid var(--slot-border-outset);
+    border-right: 2px solid var(--slot-border-outset);
+    transform: translateY(1px);
+    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.2);
+}
+
+#reset-btn {
+    margin: 20px auto 0 auto;
+    display: block;
+    font-size: 12px;
+    padding: 10px 20px;
+}
+
+#recipe-book-btn img {
+    width: 100%;
+    height: 100%;
+    image-rendering: pixelated;
+    pointer-events: none;
+}
+
+#recipe-book-btn:hover {
+    background-color: #d0d0d0;
+}
+
+#recipe-book-btn:active {
+    border-top: 2px solid var(--slot-border-inset);
+    border-left: 2px solid var(--slot-border-inset);
+    border-bottom: 2px solid var(--slot-border-outset);
+    border-right: 2px solid var(--slot-border-outset);
+}
+
+.modal {
+    display: none;
+    position: fixed;
+    z-index: 1000;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+}
+
+.modal-content {
+    background-color: var(--gui-bg);
+    margin: 5% auto;
+    padding: 0;
+    border: 3px solid var(--slot-border-outset);
+    border-bottom: 3px solid var(--slot-border-inset);
+    border-right: 3px solid var(--slot-border-inset);
+    width: 80%;
+    max-width: 800px;
+    max-height: 80%;
+    overflow: hidden;
+    font-family: 'Press Start 2P', cursive;
+}
+
+.modal-header {
+    background-color: #a0a0a0;
+    padding: 15px;
+    border-bottom: 2px solid var(--slot-border-inset);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.modal-header h2 {
+    margin: 0;
+    font-size: 16px;
+    color: var(--text-color);
+}
+
+.close {
+    font-size: 24px;
+    font-weight: bold;
+    cursor: pointer;
+    color: var(--text-color);
+    user-select: none;
+}
+
+.close:hover {
+    color: #000;
+}
+
+.modal-body {
+    padding: 20px;
+    max-height: 500px;
+    overflow-y: auto;
+}
+
+#recipes-container {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 20px;
+}
+
+.recipe-item {
+    background-color: var(--slot-bg);
+    border: 2px solid var(--slot-border-inset);
+    padding: 15px;
+    border-radius: 4px;
+}
+
+.recipe-header {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 10px;
+}
+
+.recipe-output img {
+    width: 32px;
+    height: 32px;
+    image-rendering: pixelated;
+}
+
+.recipe-name {
+    font-size: 12px;
+    color: var(--text-color);
+}
+
+.recipe-ingredients {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 4px;
+    margin-top: 10px;
+}
+
+.ingredient-slot {
+    width: 32px;
+    height: 32px;
+    background-color: var(--gui-bg);
+    border: 1px solid var(--slot-border-inset);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.ingredient-slot img {
+    width: 24px;
+    height: 24px;
+    image-rendering: pixelated;
+}
+
+.about-modal {
+    max-width: 600px;
+}
+
+.about-content {
+    text-align: left;
+}
+
+.minecraft-note {
+    background-color: #f4f1e8;
+    border: 3px solid #8b4513;
+    border-radius: 8px;
+    padding: 20px;
+    font-family: 'Press Start 2P', cursive;
+    color: #2d1810;
+    box-shadow: inset 0 0 10px rgba(139, 69, 19, 0.3);
+}
+
+.minecraft-note h3 {
+    font-size: 14px;
+    margin: 0 0 15px 0;
+    color: #4a2c2a;
+    text-align: center;
+    text-shadow: 1px 1px 0 rgba(255, 255, 255, 0.5);
+}
+
+.minecraft-note h4 {
+    font-size: 10px;
+    margin: 15px 0 8px 0;
+    color: #654321;
+}
+
+.minecraft-note p {
+    font-size: 8px;
+    line-height: 1.6;
+    margin: 8px 0;
+    color: #3d2817;
+}
+
+.minecraft-note ul {
+    font-size: 8px;
+    line-height: 1.6;
+    margin: 8px 0;
+    padding-left: 20px;
+    color: #3d2817;
+}
+
+.minecraft-note li {
+    margin: 4px 0;
+}
+
+.signature {
+    background-color: #e8dcc0;
+    border: 2px solid #c4a068;
+    border-radius: 6px;
+    padding: 15px;
+    margin-top: 20px;
+    text-align: center;
+    box-shadow: inset 0 0 5px rgba(196, 160, 104, 0.4);
+}
+
+.made-by {
+    font-size: 10px;
+    margin: 0 0 8px 0;
+    color: #8b4513;
+    text-shadow: 1px 1px 0 rgba(255, 255, 255, 0.7);
+}
+
+.subtitle {
+    font-size: 7px;
+    margin: 0;
+    color: #a0522d;
+    font-style: italic;
+}
+
+/* --- tooltip --- */
+.tooltip {
+    position: absolute;
+    background-color: #2c2c2c;
+    color: #ffffff;
+    padding: 8px 12px;
+    border: 2px solid #000000;
+    border-radius: 4px;
+    font-family: 'Press Start 2P', cursive;
+    font-size: 10px;
+    z-index: 1000;
+    pointer-events: none;
+    white-space: nowrap;
+    box-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+    transform: translate(-50%, -100%);
+    margin-top: -8px;
+}
+
+.tooltip::after {
+    content: '';
+    position: absolute;
+    top: 100%;
+    left: 50%;
+    margin-left: -4px;
+    border-width: 4px;
+    border-style: solid;
+    border-color: #2c2c2c transparent transparent transparent;
+}
+
+.tooltip.rare {
+    background-color: #7C4DFF;
+    border-color: #512DA8;
+}
+
+.tooltip.rare::after {
+    border-color: #7C4DFF transparent transparent transparent;
+}
+
+/* --- instructions styles --- */
+.instructions {
+    margin-top: 20px;
+    padding: 15px;
+    background-color: rgba(0, 0, 0, 0.3);
+    border: 2px solid var(--slot-border-inset);
+    border-radius: 4px;
+    color: #ffffff;
+    font-size: 8px;
+    line-height: 1.4;
+}
+
+.instructions p {
+    margin: 4px 0;
+}
+
+.instructions strong {
+    color: #ffff99;
+}
+
+/* --- responsive design --- */
+@media (max-width: 1200px) {
+    .character-on-page {
+        display: none;
+    }
+    
+    #gui-container {
+        margin: 10px auto;
+        margin-top: 60px;
+        max-height: calc(100vh - 80px);
+    }
+    
+    #character-selector {
+        position: fixed;
+        top: 10px;
+        left: 50%;
+        transform: translateX(-50%);
+        padding: 4px 8px;
+    }
+    
+    .character-btn {
+        width: 35px;
+        height: 35px;
+    }
+    
+    .character-btn img {
+        width: 24px;
+        height: 24px;
+    }
+    
+    .character-label {
+        font-size: 7px;
+    }
+}
+
+@media (min-width: 1201px) {
+    body {
+        overflow: hidden;
+    }
+    
+    #gui-container {
+        margin-top: 60px;
+    }
+}
+
+.loading-screen {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background: linear-gradient(135deg, #2d5016 0%, #4a7c3a 50%, #5e8b4d 100%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 10000;
+    animation: fadeOut 0.5s ease-out 3s forwards;
+}
+
+.loading-content {
+    text-align: center;
+    color: white;
+    font-family: 'Press Start 2P', cursive;
+}
+
+.minecraft-logo h1 {
+    font-size: 32px;
+    margin-bottom: 10px;
+    text-shadow: 4px 4px 0px #1a3d0f;
+    animation: glow 2s ease-in-out infinite alternate;
+}
+
+.minecraft-logo p {
+    font-size: 14px;
+    margin-bottom: 40px;
+    opacity: 0.9;
+    text-shadow: 2px 2px 0px #1a3d0f;
+}
+
+.loading-animation {
+    margin-bottom: 40px;
+}
+
+.loading-bar {
+    width: 300px;
+    height: 20px;
+    background-color: #1a3d0f;
+    border: 3px solid #ffffff;
+    margin: 0 auto 20px;
+    position: relative;
+    overflow: hidden;
+}
+
+.loading-fill {
+    height: 100%;
+    width: 0;
+    background: linear-gradient(90deg, #4a7c3a, #5e8b4d, #6fa85f);
+    animation: loadingProgress 3s ease-out forwards;
+}
+
+.loading-text {
+    font-size: 12px;
+    opacity: 0.8;
+    animation: pulse 1.5s ease-in-out infinite;
+}
+
+.loading-blocks {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+    margin-top: 30px;
+}
+
+.block {
+    width: 24px;
+    height: 24px;
+    background-color: #4a7c3a;
+    border: 2px solid #ffffff;
+    animation: blockFloat 0.8s ease-in-out infinite;
+}
+
+.block-1 { animation-delay: 0s; }
+.block-2 { animation-delay: 0.1s; }
+.block-3 { animation-delay: 0.2s; }
+.block-4 { animation-delay: 0.3s; }
+.block-5 { animation-delay: 0.4s; }
+
+@keyframes fadeOut {
+    0% { opacity: 1; visibility: visible; }
+    100% { opacity: 0; visibility: hidden; }
+}
+
+@keyframes glow {
+    0% { text-shadow: 4px 4px 0px #1a3d0f, 0 0 10px #4a7c3a; }
+    100% { text-shadow: 4px 4px 0px #1a3d0f, 0 0 20px #5e8b4d, 0 0 30px #6fa85f; }
+}
+
+@keyframes loadingProgress {
+    0% { width: 0%; }
+    100% { width: 100%; }
+}
+
+@keyframes pulse {
+    0%, 100% { opacity: 0.6; }
+    50% { opacity: 1; }
+}
+
+@keyframes blockFloat {
+    0%, 100% { transform: translateY(0px); }
+    50% { transform: translateY(-8px); }
+}

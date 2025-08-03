@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>minecraft : web inventory & crafting</title>
+    <link rel="stylesheet" href="style.css">
+    <!-- the tone.js library for sound effects -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/tone/14.7.77/Tone.js"></script>
+    <script src="script.js" defer></script>
+</head>
+<body>
+
+    <!-- loading screen -->
+    <div id="loading-screen" class="loading-screen">
+        <div class="loading-content">
+            <div class="minecraft-logo">
+                <h1>MINECRAFT INVENTORY</h1>
+                <p>Web Crafting System</p>
+            </div>
+            <div class="loading-animation">
+                <div class="loading-bar">
+                    <div class="loading-fill"></div>
+                </div>
+                <p class="loading-text">Loading blocks...</p>
+            </div>
+            <div class="loading-blocks">
+                <div class="block block-1"></div>
+                <div class="block block-2"></div>
+                <div class="block block-3"></div>
+                <div class="block block-4"></div>
+                <div class="block block-5"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- theme toggle button -->
+    <button id="theme-toggle-btn" class="corner-button top-left" title="Toggle Day/Night Theme">
+        <span class="theme-text">DAY</span>
+    </button>
+    
+    <!-- about button -->
+    <button id="home-btn" class="corner-button top-right" title="About Project">
+        <img src="images/home.png" alt="Home">
+    </button>
+
+    <!-- character containers on the page background -->
+    <div class="character-on-page" id="alex-character">
+        <div id="speech-bubble-alex" class="speech-bubble hidden">
+            <div class="speech-text">Nice!</div>
+            <div class="speech-arrow"></div>
+        </div>
+        <img class="character-image" src="images/sunny.png" alt="Alex">
+        <div class="shadow"></div>
+    </div>
+    
+    <div class="character-on-page" id="sunny-character">
+        <div id="speech-bubble-sunny" class="speech-bubble hidden">
+            <div class="speech-text">Nice!</div>
+            <div class="speech-arrow"></div>
+        </div>
+        <img class="character-image" src="images/alex.png" alt="Sunny">
+        <div class="shadow"></div>
+    </div>
+
+    <div id="gui-container">
+        
+        <!-- character selection -->
+        <div id="character-selector">
+            <div class="character-selection-wrapper">
+                <button id="alex-btn" class="character-btn active" data-character="alex">
+                    <img src="images/sunny.png" alt="Alex">
+                </button>
+                <span class="character-label">Alex</span>
+            </div>
+            <div class="character-selection-wrapper">
+                <button id="sunny-btn" class="character-btn" data-character="sunny">
+                    <img src="images/alex.png" alt="Sunny">
+                </button>
+                <span class="character-label">Sunny</span>
+            </div>
+        </div>
+
+        <!-- recipe book button -->
+        <div id="recipe-book-btn" title="Recipe Book">
+            <img src="images/recipe_book.png" alt="Recipe Book">
+        </div>
+        
+        <!-- crafting area -->
+        <h1 class="gui-title">Crafting</h1>
+        <div id="crafting-area">
+            <div id="crafting-grid" class="item-grid"></div>
+            <div id="crafting-arrow">→</div>
+            <div id="crafting-output" class="item-grid"></div>
+            <button id="craft-btn" class="craft-button">Craft</button>
+        </div>
+
+        <!-- saved items chest -->
+        <h1 class="gui-title">Saved Items</h1>
+        <div id="saved-items-grid" class="item-grid">
+            <!-- saved items chest (9 slots) will be generated here -->
+        </div>
+
+        <!-- inventory area -->
+        <h1 class="gui-title">Inventory</h1>
+        <div id="inventory-grid" class="item-grid">
+            <!-- the top inventory rows (18 slots) will be generated here -->
+        </div>
+
+        <!-- a separate container for the hotbar -->
+        <div id="hotbar-grid" class="item-grid">
+            <!-- the bottom hotbar row (9 slots) will be generated here -->
+        </div>
+
+        <!-- reset button at the bottom -->
+        <button id="reset-btn" class="craft-button" title="Reset Inventory">Reset Inventory</button>
+        
+        <!-- instructions -->
+        <div class="instructions">
+            <p><strong>Controls:</strong></p>
+            <p>• <strong>Left Click:</strong> Pick up full stack / Place all items</p>
+            <p>• <strong>Right Click:</strong> Pick up single item from inventory</p>
+            <p>• <strong>Shift + Left Click:</strong> Pick up single item from inventory</p>
+            <p>• Crafting slots only hold 1 item each</p>
+        </div>
+
+    </div>
+
+    <!-- recipe book modal -->
+    <div id="recipe-book-modal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Recipe Book</h2>
+                <span class="close">&times;</span>
+            </div>
+            <div class="modal-body">
+                <div id="recipes-container"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- about project modal -->
+    <div id="about-modal" class="modal">
+        <div class="modal-content about-modal">
+            <div class="modal-header">
+                <h2>About This Project</h2>
+                <span class="close">&times;</span>
+            </div>
+            <div class="modal-body">
+                <div class="about-content">
+                    <div class="minecraft-note">
+                        <h3> Minecraft GUI Inventory System</h3>
+                        <p>A fully interactive Minecraft-style inventory crafting system built with HTML5, CSS3, and JavaScript.</p>
+                        
+                        <h4> Features:</h4>
+                        <ul>
+                            <li> Advanced click-based inventory management</li>
+                            <li> 2x2 crafting grid with authentic recipes</li>
+                            <li> Character selection with speech bubbles</li>
+                            <li> Interactive recipe book</li>
+                            <li> Day/Night theme switching</li>
+                            <li> Sound effects with Tone.js</li>
+                            <li> Responsive design</li>
+                        </ul>
+                        
+                        <h4> Recipes Available:</h4>
+                        <p>Bread, Cake, Maps, Firework Rockets, Tools, Furniture, and more!</p>
+                        
+                        <div class="signature">
+                            <p class="made-by"> Crafted with luv by <strong>Rabbika</strong> </p>
+                            <p class="subtitle">Building amazing web experiences, one pixel at a time!</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</body>
+</html>
